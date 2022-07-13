@@ -2,10 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movie_app/features/home/domain/entities/movie.dart';
-import 'package:movie_app/features/home/domain/repositories/trending_movie_repository.dart';
+import 'package:movie_app/features/home/domain/repositories/movie_repository.dart';
 import 'package:movie_app/features/home/domain/usecases/get_trending_movie.dart';
 
-class MockHomeRepository extends Mock implements TrendingMovieRepository{
+class MockHomeRepository extends Mock implements MovieRepository{
 
 }
 
@@ -45,7 +45,7 @@ void main(){
         when(() => mockHomeRepository.getTrendingMovie(tTimeWindow))
           .thenAnswer((_) async => Right(tMovie));
       //act
-        final result =  await usecase.execute(timeWindow: tTimeWindow);
+        final result =  await usecase(Params(timeWindow: tTimeWindow));
       //assert
         expect(result, Right(tMovie));
         verify(() => mockHomeRepository.getTrendingMovie(tTimeWindow)).called(1);
