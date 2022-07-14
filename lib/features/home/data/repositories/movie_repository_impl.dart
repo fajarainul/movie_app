@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:movie_app/core/errors/exceptions.dart';
 
 import 'package:movie_app/core/errors/failure.dart';
-import 'package:movie_app/core/platform/network_info.dart';
+import 'package:movie_app/core/network/network_info.dart';
 import 'package:movie_app/features/home/data/datasources/movie_local_datasource.dart';
 import 'package:movie_app/features/home/data/datasources/movie_remote_datasource.dart';
 import 'package:movie_app/features/home/domain/entities/movie.dart';
@@ -20,26 +20,26 @@ class MovieRepositoryImpl extends MovieRepository {
     required this.networkInfo,
   });
 
-
   @override
-  Future<Either<Failure, List<Movie>>> getTrendingMovies(String? timeWindow) async{
-    if(await networkInfo.isConnected){
-      try{
-        final remoteResult = await remoteDatasource.getTrendingMovies(timeWindow);
+  Future<Either<Failure, List<Movie>>> getTrendingMovies(
+      String? timeWindow) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteResult =
+            await remoteDatasource.getTrendingMovies(timeWindow);
         await localDatasource.cacheTrendingMovies(remoteResult);
         return Right(remoteResult);
-      } on ServerException{
+      } on ServerException {
         return Left(ServerFailure());
       }
-    }else{
-      try{
-        final localResult = await localDatasource.getTrendingMoviesFromLocalDatasource();
+    } else {
+      try {
+        final localResult =
+            await localDatasource.getTrendingMoviesFromLocalDatasource();
         return Right(localResult);
-      }on CacheException{
+      } on CacheException {
         return Left(CacheFailure());
       }
     }
-
   }
-  
 }

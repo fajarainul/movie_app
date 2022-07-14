@@ -1,12 +1,6 @@
 {
     "configurations": [
         {
-            "name": "Flutter: Run all Tests",
-            "type": "dart",
-            "request": "launch",
-            "program": "./test/"
-        },
-        {
             "name": "Dart: Run all Tests",
             "type": "dart",
             "request": "launch",

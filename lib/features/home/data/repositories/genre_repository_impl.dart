@@ -3,14 +3,13 @@ import 'package:dartz/dartz.dart';
 import 'package:movie_app/core/errors/exceptions.dart';
 
 import 'package:movie_app/core/errors/failure.dart';
-import 'package:movie_app/core/platform/network_info.dart';
+import 'package:movie_app/core/network/network_info.dart';
 import 'package:movie_app/features/home/data/datasources/genre_local_datasource.dart';
 import 'package:movie_app/features/home/data/datasources/genre_remote_datasource.dart';
 import 'package:movie_app/features/home/domain/entities/genre.dart';
 import 'package:movie_app/features/home/domain/repositories/genre_repository.dart';
 
 class GenreRepositoryImpl extends GenreRepository {
-
   final NetworkInfo networkInfo;
   final GenreRemoteDatasource remoteDatasource;
   final GenreLocalDatasource localDatasource;
@@ -22,23 +21,23 @@ class GenreRepositoryImpl extends GenreRepository {
   });
 
   @override
-  Future<Either<Failure, List<Genre>>> getGenres()  async{
-    if(await networkInfo.isConnected){
-      try{
+  Future<Either<Failure, List<Genre>>> getGenres() async {
+    if (await networkInfo.isConnected) {
+      try {
         final remoteResult = await remoteDatasource.getGenres();
         localDatasource.cachedGenres(remoteResult);
         return Right(remoteResult);
-      }on ServerException{
+      } on ServerException {
         return Left(ServerFailure());
       }
-    }else{
-      try{
-        final localResult = await localDatasource.getGenresFromLocalDatasource();
+    } else {
+      try {
+        final localResult =
+            await localDatasource.getGenresFromLocalDatasource();
         return Right(localResult);
-      }on CacheException{
+      } on CacheException {
         return Left(CacheFailure());
       }
     }
   }
-
 }
