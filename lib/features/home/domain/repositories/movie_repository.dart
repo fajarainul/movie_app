@@ -3,5 +3,5 @@ import 'package:movie_app/core/errors/failure.dart';
 import 'package:movie_app/features/home/domain/entities/movie.dart';
 
 abstract class MovieRepository {
-  Future<Either<Failure, Movie>> getTrendingMovie(String? timeWindow);
+  Future<Either<Failure, List<Movie>>> getTrendingMovies(String? timeWindow);
 }
