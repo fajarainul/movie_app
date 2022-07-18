@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -35,7 +37,7 @@ void main() {
 
   String tTimeWindow = 'week';
   final tListMovieModel = [
-    MovieModel(
+    const MovieModel(
         adult: false,
         backdropPath: "/p1F51Lvj3sMopG948F5HsBbl43C.jpg",
         genreIds: [1],
@@ -54,7 +56,25 @@ void main() {
         voteCount: 519)
   ];
 
-  List<Movie> tListMovie = tListMovieModel;
+  final tListMovie = [
+    const Movie(
+        adult: false,
+        backdropPath: "/p1F51Lvj3sMopG948F5HsBbl43C.jpg",
+        genreIds: [1],
+        id: 616037,
+        mediaType: "movie",
+        title: "Thor: Love and Thunder",
+        originalLanguage: "en",
+        originalTitle: "Thor: Love and Thunder",
+        overview:
+            "After his retirement is interrupted by Gorr the God Butcher, a galactic killer who seeks the extinction of the gods, Thor enlists the help of King Valkyrie, Korg, and ex-girlfriend Jane Foster, who now inexplicably wields Mjolnir as the Mighty Thor. Together they embark upon a harrowing cosmic adventure to uncover the mystery of the God Butcher’s vengeance and stop him before it’s too late.",
+        popularity: 5473.405,
+        posterPath: "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+        releaseDate: "2022-07-06",
+        video: false,
+        voteAverage: 7.066,
+        voteCount: 519)
+  ];
 
   group('getTrendingMovies', () {
     test(
@@ -89,11 +109,15 @@ void main() {
           when(() => mockMovieRemoteDatasource.getTrendingMovies(any()))
               .thenAnswer((_) async => tListMovieModel);
           //act
-          final result = await repository.getTrendingMovies(tTimeWindow);
+          final Either<Failure, List<Movie>> result =
+              await repository.getTrendingMovies(tTimeWindow);
           //assert
-          verify(() => mockMovieRemoteDatasource.getTrendingMovies(tTimeWindow))
-              .called(1);
-          expect(result, equals(Right(tListMovie)));
+          result.fold((l) => null, (listMovie) {
+            verify(() =>
+                    mockMovieRemoteDatasource.getTrendingMovies(tTimeWindow))
+                .called(1);
+            expect(listMovie, equals(tListMovie));
+          });
         },
       );
 
@@ -154,7 +178,9 @@ void main() {
               .getTrendingMoviesFromLocalDatasource()).called(1);
           verifyZeroInteractions(mockMovieRemoteDatasource);
 
-          expect(result, Right(tListMovieModel));
+          result.fold((l) => null, (listMovie) {
+            expect(listMovie, tListMovie);
+          });
         },
       );
 

@@ -11,12 +11,12 @@ class MockMovieRepository extends Mock implements MovieRepository{
 
 void main(){
 
-  late GetTrendingMovie usecase;
+  late GetTrendingMovies usecase;
   late MockMovieRepository mockMovieRepository;
 
   setUp((){
     mockMovieRepository = MockMovieRepository();
-    usecase = GetTrendingMovie(mockMovieRepository);
+    usecase = GetTrendingMovies(mockMovieRepository);
   });
 
   const tTimeWindow = "day";

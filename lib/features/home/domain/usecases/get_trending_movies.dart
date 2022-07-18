@@ -7,8 +7,8 @@ import 'package:movie_app/core/usecases/usecase.dart';
 import 'package:movie_app/features/home/domain/entities/movie.dart';
 import 'package:movie_app/features/home/domain/repositories/movie_repository.dart';
 
-class GetTrendingMovie implements UseCase<List<Movie>, Params> {
-  GetTrendingMovie(this.repository);
+class GetTrendingMovies implements UseCase<List<Movie>, Params> {
+  GetTrendingMovies(this.repository);
 
   final MovieRepository repository;
 
@@ -19,12 +19,11 @@ class GetTrendingMovie implements UseCase<List<Movie>, Params> {
 }
 
 class Params extends Equatable {
-  String timeWindow;
-  Params({
+  final String timeWindow;
+  const Params({
     required this.timeWindow,
   }) : super();
 
   @override
-  // TODO: implement props
   List<Object?> get props => [timeWindow];
 }
