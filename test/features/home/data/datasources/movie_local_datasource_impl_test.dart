@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:movie_app/core/errors/exceptions.dart';
 import 'package:movie_app/core/utils/app_constant.dart';
 import 'package:movie_app/features/home/data/datasources/movie_local_datasource.dart';
 import 'package:movie_app/features/home/data/models/movie_model.dart';
@@ -62,6 +63,59 @@ void main() {
         verify(() => mockSharedPreferences
             .getString(AppConstant.KEY_CACHED_TRENDING_MOVIES));
         expect(result, equals(tListMovieModel));
+      },
+    );
+
+    test(
+      "should throw CacheException when there is no data cached",
+      () async {
+        //arrange
+        when(() => mockSharedPreferences.getString(any())).thenReturn('');
+        //act
+        final call =
+            movieLocalDatasourceImpl.getTrendingMoviesFromLocalDatasource;
+
+        //assert
+        expect(() => call(), throwsA(const TypeMatcher<CacheException>()));
+      },
+    );
+  });
+
+  group('cacheTrendingMovies', () {
+    final List<MovieModel> tListMovieModel = [
+      MovieModel(
+          adult: false,
+          backdropPath: "/p1F51Lvj3sMopG948F5HsBbl43C.jpg",
+          genreIds: [1],
+          id: 616037,
+          mediaType: "movie",
+          title: "Thor: Love and Thunder",
+          originalLanguage: "en",
+          originalTitle: "Thor: Love and Thunder",
+          overview:
+              "After his retirement is interrupted by Gorr the God Butcher, a galactic killer who seeks the extinction of the gods, Thor enlists the help of King Valkyrie, Korg, and ex-girlfriend Jane Foster, who now inexplicably wields Mjolnir as the Mighty Thor. Together they embark upon a harrowing cosmic adventure to uncover the mystery of the God Butcher’s vengeance and stop him before it’s too late.",
+          popularity: 100.000,
+          posterPath: "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+          releaseDate: "2022-07-06",
+          video: false,
+          voteAverage: 5.6,
+          voteCount: 100)
+    ];
+
+    test(
+      "should call sharedpreferences setString to cache data",
+      () async {
+        //arrange
+        when(() => mockSharedPreferences.setString(any(), any()))
+            .thenAnswer((invocation) async => Future.value(true));
+        //act
+        final result =
+            await movieLocalDatasourceImpl.cacheTrendingMovies(tListMovieModel);
+        //assert
+
+        final jsonString = json.encode(tListMovieModel);
+        verify(() => mockSharedPreferences.setString(
+            AppConstant.KEY_CACHED_TRENDING_MOVIES, jsonString)).called(1);
       },
     );
   });

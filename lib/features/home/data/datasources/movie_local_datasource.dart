@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:movie_app/core/errors/exceptions.dart';
 import 'package:movie_app/core/utils/app_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,19 +30,27 @@ class MovieLocalDatasourceImpl implements MovieLocalDatasource {
     final String jsonString =
         sharedPreferences.getString(AppConstant.KEY_CACHED_TRENDING_MOVIES) ??
             '';
-    final List<Map<String, dynamic>> listMapMovieModel =
-        List<Map<String, dynamic>>.from(json.decode(jsonString));
+    if (jsonString.isNotEmpty) {
+      final List<Map<String, dynamic>> listMapMovieModel =
+          List<Map<String, dynamic>>.from(json.decode(jsonString));
 
-    List<MovieModel> listMovieModel = listMapMovieModel.map<MovieModel>((item) {
-      return MovieModel.fromJson(item);
-    }).toList();
+      List<MovieModel> listMovieModel =
+          listMapMovieModel.map<MovieModel>((item) {
+        return MovieModel.fromJson(item);
+      }).toList();
 
-    return Future.value(listMovieModel);
+      return Future.value(listMovieModel);
+    } else {
+      throw (CacheException());
+    }
   }
 
   @override
-  Future<void> cacheTrendingMovies(List<MovieModel> listMovieModel) {
-    // TODO: implement cacheTrendingMovies
-    throw UnimplementedError();
+  Future<void> cacheTrendingMovies(List<MovieModel> listMovieModel) async { 
+    final jsonString = json.encode(listMovieModel);
+    final result = await sharedPreferences.setString(
+        AppConstant.KEY_CACHED_TRENDING_MOVIES, jsonString);
+
+    return Future<void>.delayed(Duration.zero);
   }
 }
