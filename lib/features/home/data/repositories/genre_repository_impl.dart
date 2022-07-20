@@ -6,6 +6,7 @@ import 'package:movie_app/core/errors/failure.dart';
 import 'package:movie_app/core/network/network_info.dart';
 import 'package:movie_app/features/home/data/datasources/genre_local_datasource.dart';
 import 'package:movie_app/features/home/data/datasources/genre_remote_datasource.dart';
+import 'package:movie_app/features/home/data/models/genre_model.dart';
 import 'package:movie_app/features/home/domain/entities/genre.dart';
 import 'package:movie_app/features/home/domain/repositories/genre_repository.dart';
 
@@ -26,7 +27,7 @@ class GenreRepositoryImpl extends GenreRepository {
       try {
         final remoteResult = await remoteDatasource.getGenres();
         localDatasource.cachedGenres(remoteResult);
-        return Right(remoteResult);
+        return Right(_convertGenreModelToGenre(remoteResult));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -34,10 +35,20 @@ class GenreRepositoryImpl extends GenreRepository {
       try {
         final localResult =
             await localDatasource.getGenresFromLocalDatasource();
-        return Right(localResult);
+        return Right(_convertGenreModelToGenre(localResult));
       } on CacheException {
         return Left(CacheFailure());
       }
     }
+  }
+
+  List<Genre> _convertGenreModelToGenre(List<GenreModel> listGenreModel) {
+    final List<Genre> result = [];
+
+    for (var genreModel in listGenreModel) {
+      result.add(genreModel.toGenre());
+    }
+
+    return result;
   }
 }

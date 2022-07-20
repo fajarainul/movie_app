@@ -24,7 +24,7 @@ void main() {
 
   final tListGenreModel = [GenreModel(name: 'comedy', id: 1)];
 
-  List<Genre> tListGenre = tListGenreModel;
+  List<Genre> tListGenre = [Genre(name: 'comedy', id: 1)];
 
   setUp(() {
     mockNetworkInfo = MockNetworkInfo();
@@ -75,7 +75,8 @@ void main() {
           verify(() => mockNetworkInfo.isConnected).called(1);
           verify(() => mockGenreRemoteDataSource.getGenres()).called(1);
 
-          expect(result, equals(Right(tListGenre)));
+          result.fold(
+              (l) => null, (listGenre) => expect(listGenre, tListGenre));
         },
       );
 
@@ -94,7 +95,8 @@ void main() {
           verify(() => mockGenreLocalDatasource.cachedGenres(tListGenreModel))
               .called(1);
 
-          expect(result, Right(tListGenre));
+          result.fold(
+              (l) => null, (listGenre) => expect(listGenre, tListGenre));
         },
       );
 
@@ -138,7 +140,8 @@ void main() {
               .called(1);
           verifyZeroInteractions(mockGenreRemoteDataSource);
 
-          expect(result, Right(tListGenre));
+          result.fold(
+              (l) => null, (listGenre) => expect(listGenre, tListGenre));
         },
       );
 

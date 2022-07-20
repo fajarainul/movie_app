@@ -74,17 +74,17 @@ void main() {
     );
   });
 
-  // group('toMovie', () {
-  //   test(
-  //     "should return Movie instance",
-  //     () async {
-  //       //arrange
+  group('toMovie', () {
+    test(
+      "should return Movie instance",
+      () async {
+        //arrange
 
-  //       //act
-  //       final result = tMovieModel.toMovie();
-  //       //assert
-  //       expect(result, tMovie);
-  //     },
-  //   );
-  // });
+        //act
+        final result = tMovieModel.toMovie();
+        //assert
+        expect(result, tMovie);
+      },
+    );
+  });
 }

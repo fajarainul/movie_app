@@ -1,13 +1,25 @@
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_app/features/home/domain/entities/genre.dart';
 
-class GenreModel extends Genre {
-  const GenreModel({name, id}) : super(name: name, id: id);
+part 'genre_model.g.dart';
 
-  factory GenreModel.fromJson(Map<String, dynamic> data) => GenreModel(
-        name: data['name'] as String?,
-        id: data['id'] as int?,
-      );
+@JsonSerializable()
+class GenreModel extends Equatable {
+  final String? name;
+  final int? id;
+
+  const GenreModel({this.name, this.id});
+
+  factory GenreModel.fromJson(Map<String, dynamic> json) =>
+      _$GenreModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GenreModelToJson(this);
 
   @override
-  Map<String, dynamic> toJson() => {'name': name, 'id': id};
+  List<Object?> get props => [name, id];
+
+  Genre toGenre() {
+    return Genre(name: name, id: id);
+  }
 }
