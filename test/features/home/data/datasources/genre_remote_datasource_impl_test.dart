@@ -56,6 +56,11 @@ void main() {
       await datasource.getGenres();
 
       //assert
+      final uri = Uri.parse('${ApiConstant.baseApiUrl}/genre/movie/list')
+          .replace(queryParameters: {
+        'api_key': ApiConstant.apiKey,
+      });
+
       verify(() => mockHttpClient.get(
             Uri.parse('${ApiConstant.baseApiUrl}/genre/movie/list')
                 .replace(queryParameters: {
